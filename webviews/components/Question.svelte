@@ -1,6 +1,7 @@
 <script lang="ts">
      import axios from "axios";
      import MdCloseIcon from "svelte-icons/md/MdClose.svelte";
+import StackoverflowService from "../core/StackoverflowService";
 import ActivityIndicator from "./ActivityIndicator.svelte";
      import Answer from "./Answer.svelte";
 
@@ -12,17 +13,7 @@ import ActivityIndicator from "./ActivityIndicator.svelte";
      async function getAnswers() {
           try {
                loading = true
-               const { data } = await axios.get(
-                    `https://api.stackexchange.com/2.2/questions/${question.question_id}/answers`,
-                    {
-                         params: {
-                              order: "desc",
-                              sort: "activity",
-                              filter: "!--1nZy5L4.V1",
-                              site: "stackoverflow",
-                         },
-                    }
-               );
+               const data = await StackoverflowService.getAnswers(question.question_id);
                answers = data.items;
           } catch (e) {
                console.log(e);

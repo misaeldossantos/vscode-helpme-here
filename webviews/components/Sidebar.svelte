@@ -1,6 +1,7 @@
 <script lang="ts">
     import axios from "axios";
     import RpcCommands from "../core/RpcCommands";
+import StackoverflowService from "../core/StackoverflowService";
     import ActivityIndicator from "./ActivityIndicator.svelte";
     import ListItem from "./ListItem.svelte";
     import Question from "./Question.svelte";
@@ -43,17 +44,7 @@
     async function search() {
         try {
             loading = true;
-            const { data } = await axios.get(
-                `https://api.stackexchange.com/2.2/search/advanced`,
-                {
-                    params: {
-                        order: "desc",
-                        sort: "relevance",
-                        q: text,
-                        site: "stackoverflow",
-                    },
-                }
-            );
+            const data = await StackoverflowService.search({ q: text })
             results = data.items;
             hasMore = data.hasMore;
         } catch (e) {
