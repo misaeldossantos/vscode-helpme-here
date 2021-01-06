@@ -14,7 +14,12 @@
      .container {
           cursor: pointer;
           margin-bottom: 5px;
-          background-color: var(--vscode-input-background);
+          background-color: var(--vscode-list-focusBackground);
+          border: 1px solid var(--vscode-z);
+     }
+
+     .container:hover {
+          background-color: var(--vscode-list-hoverBackground);
      }
 
      .content:hover {
@@ -57,8 +62,8 @@
           {@html item.title}
      </p>
      <div class="footer">
-          <div class="link-icon">
+          <a href={item.link} class="link-icon">
                <MdLinkIcon />
-          </div>
+          </a>
      </div>
 </div>

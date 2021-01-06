@@ -19,7 +19,7 @@
         {
           "id": "helpmehere-sidebar-view",
           "title": "HelpME",
-          "icon": "media/checklist.svg"
+          "icon": "media/help.svg"
         }
       ]
     },
@@ -29,7 +29,7 @@
           "type": "webview",
           "id": "helpmehere-sidebar",
           "name": "Help me here!",
-          "icon": "media/checklist.svg",
+          "icon": "media/help.svg",
           "contextualTitle": "Help me here!"
         }
       ]
@@ -74,6 +74,7 @@
     "webpack-cli": "^4.2.0"
   },
   "dependencies": {
+    "@sap-devx/webview-rpc": "^0.2.3",
     "axios": "^0.21.1",
     "svelte-icons": "^2.1.0"
   }

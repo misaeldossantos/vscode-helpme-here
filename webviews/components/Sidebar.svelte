@@ -1,23 +1,14 @@
-<script context="module" lang="ts">
-    declare var acquireVsCodeApi: any;
-    const vscode = acquireVsCodeApi();
-</script>
-
 <script lang="ts">
     import axios from "axios";
+    import RpcCommands from "../core/RpcCommands";
     import ActivityIndicator from "./ActivityIndicator.svelte";
-import ListItem from "./ListItem.svelte";
+    import ListItem from "./ListItem.svelte";
     import Question from "./Question.svelte";
 
+    const vscode = RpcCommands.vscodeApi;
+
     let text = "";
-    let selectionText = "";
-    let results: any[] = [{
-        title: "saldsladksajdksajdlka"
-    }, {
-        title: "asdsakdlasjdkl"
-    }, {
-        title: "sadlsakd"
-    }];
+    let results: any[] = [];
     let hasMore = false;
     let loading = false;
     let questionModalOpened = false;
@@ -35,14 +26,18 @@ import ListItem from "./ListItem.svelte";
         }
 
         text = previousState.text || "";
-        selectionText = previousState.selectionText || "";
         results = previousState.results || [];
         hasMore = previousState.hasMore || false;
         loading = false;
     }
 
-    function getFromSelection() {
-        text = selectionText;
+    async function getFromSelection() {
+        text = await RpcCommands.getEditorSelectedText();
+    }
+
+    async function getFromClipboard() {
+        const clipboardText = await RpcCommands.getClipboardText();
+        text += clipboardText.trim();
     }
 
     async function search() {
@@ -68,24 +63,15 @@ import ListItem from "./ListItem.svelte";
         }
     }
 
-    window.addEventListener("message", (event) => {
-        const { command, payload } = event.data;
-        if (command === "vscodeSelection") {
-            selectionText = payload.text;
-        }
-    });
-
-    // setPreviousState();
+    setPreviousState();
 
     setInterval(() => {
         // Update the saved state
-        vscode.setState({ text, selectionText, results, hasMore });
+        vscode.setState({ text, results, hasMore });
     }, 100);
-    
 </script>
 
 <style>
-
     * {
         user-select: none;
     }
@@ -94,28 +80,27 @@ import ListItem from "./ListItem.svelte";
         resize: vertical;
     }
 
-    .loader-container {
-        flex: 1;
-        display: flex;
-        height: 100%;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-
     a {
         cursor: pointer;
     }
+
+    .form * + * {
+        margin-bottom: 5px;
+    }
+
+    .form {
+        display: flex;
+        flex-direction: column;
+    }
 </style>
 
-<h3>Issue</h3>
-
-<form>
-    <textarea placeholder="Write your issue here" bind:value={text} />
+<form class="form">
+    <textarea rows="6" placeholder="Write your issue here" bind:value={text} />
     <a on:click={getFromSelection} href="void(0)">
         Get selected text from editor
     </a>
-    <button on:click={search}> Search </button>
+    <a on:click={getFromClipboard} href="void(0)"> Paste from clipboard </a>
+    <button on:click={search}> Search on StackOverflow </button>
 </form>
 
 <div class="list">
@@ -124,23 +109,17 @@ import ListItem from "./ListItem.svelte";
             <ActivityIndicator />
         </div>
     {:else}
-        <div style="height: 10px;"></div>
+        <div style="height: 10px;" />
         {#if results.length}
-            <h2>
-                Results
-            </h2>
+            <h2>Results</h2>
+        {:else}
+            <h2>No results found</h2>
         {/if}
-        <div style="height: 10px;"></div>
+        <div style="height: 10px;" />
         {#each results as result}
-            <ListItem
-                on:openModal={openModal}
-                item={result}
-            />
+            <ListItem on:openModal={event => openModal(event.detail)} item={result} />
         {/each}
     {/if}
 </div>
 
-<Question 
-    question={currentQuestion}
-    opened={questionModalOpened}
-/>
+<Question question={currentQuestion} bind:opened={questionModalOpened} />
