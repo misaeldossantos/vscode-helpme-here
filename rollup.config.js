@@ -6,6 +6,7 @@ import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
 import path from "path";
 import fs from "fs";
+import css from 'rollup-plugin-css-only';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -22,6 +23,7 @@ export default fs
         file: "out/compiled/" + name + ".js",
       },
       plugins: [
+        css({ output: 'vendor.css' }),
         svelte({
           // enable run-time checks when not in production
           dev: !production,
@@ -30,7 +32,15 @@ export default fs
           css: (css) => {
             css.write(name + ".css");
           },
-          preprocess: sveltePreprocess(),
+          preprocess: sveltePreprocess({
+            sourceMap: !production,
+            postcss: {
+              plugins: [
+                require("tailwindcss"),
+                require("autoprefixer")
+              ],
+            },
+          }),
         }),
 
         // If you have external dependencies installed from

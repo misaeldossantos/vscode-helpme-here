@@ -1,6 +1,7 @@
 <script type="ts">
      import { createEventDispatcher } from "svelte";
-     import MdLinkIcon from 'svelte-icons/md/MdLink.svelte'
+     import MdLinkIcon from "svelte-icons/md/MdLink.svelte";
+     import MdChatIcon from "svelte-icons/md/MdChat.svelte";
 
      const dispatch = createEventDispatcher();
      export let item;
@@ -24,7 +25,6 @@
 
      .content:hover {
           opacity: 0.8;
-          
      }
 
      .content {
@@ -36,14 +36,18 @@
           border-top: 1px solid grey;
           display: flex;
           flex-direction: row;
-          justify-content: flex-end;
+          justify-content: space-between;
      }
 
-     .link-icon {
+     .link-icon, .md-chat-icon {
           height: 20px;
           width: 20px;
           color: var(--vscode-textLink-foreground);
           transition: transform 0.5s;
+     }
+
+     .md-chat-icon {
+          color: white;
      }
 
      .link-icon:hover {
@@ -51,6 +55,11 @@
           transform: scale(1.2);
      }
 
+     .answers-container {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+     }
 </style>
 
 <div class="container">
@@ -62,6 +71,12 @@
           {@html item.title}
      </p>
      <div class="footer">
+          <div class="answers-container">
+               <div class="md-chat-icon" style="margin-right: 10px;">
+                    <MdChatIcon />
+               </div>
+               <span>{item.answer_count}</span>
+          </div>
           <a href={item.link} class="link-icon">
                <MdLinkIcon />
           </a>

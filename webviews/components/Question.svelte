@@ -1,8 +1,7 @@
 <script lang="ts">
-     import axios from "axios";
      import MdCloseIcon from "svelte-icons/md/MdClose.svelte";
-import StackoverflowService from "../core/StackoverflowService";
-import ActivityIndicator from "./ActivityIndicator.svelte";
+     import StackoverflowService from "../core/StackoverflowService";
+     import ActivityIndicator from "./ActivityIndicator.svelte";
      import Answer from "./Answer.svelte";
 
      export let question: any = null;
@@ -37,19 +36,18 @@ import ActivityIndicator from "./ActivityIndicator.svelte";
           display: flex;
           flex-direction: column;
           flex: 1;
+          width: 100%;
           height: 100%;
           overflow: auto;
           transition: all 0.5s;
      }
 
      .content {
-          border-top-left-radius: 20px;
-          border-top-right-radius: 20px;
+          border-top: 1px solid var(--vscode-foreground);
           display: flex;
           flex-wrap: wrap;
           flex-direction: column;
-          background-color: var(--vscode-input-background);
-          padding: 20px;
+          background-color: var(--vscode-editor-background);
           flex: 1;
           font-size: 12pt;
           line-height: 20px;
@@ -62,8 +60,7 @@ import ActivityIndicator from "./ActivityIndicator.svelte";
      }
 
      .header .bg {
-          background-color: rgba(0, 0, 0, 0.8);
-          filter: blur(8px);
+          background-color: var(--vscode-button-background);
           position: absolute;
           top: 0;
           right: 0;
@@ -81,9 +78,8 @@ import ActivityIndicator from "./ActivityIndicator.svelte";
      }
 
      .header-content {
+          width: 100%;
           padding: 20px;
-          display: flex;
-          flex-direction: column;
      }
 
      .close-icon {
@@ -97,6 +93,14 @@ import ActivityIndicator from "./ActivityIndicator.svelte";
      .close-icon {
           height: 20px;
           width: 20px;
+          color: var(--vscode-button-background);
+          background-color: white;
+          border-radius: 50%;
+          transition: opacity 0.5s;
+     }
+
+     .close-icon:hover {
+          opacity: 0.5;
      }
 
      .no-answers {
@@ -108,18 +112,18 @@ import ActivityIndicator from "./ActivityIndicator.svelte";
      }
 
      .opened {
-          transform: translateY(0);
+          transform: translateX(0);
      }
 
      .closed {
-          transform: translateY(100%);
+          transform: translateX(100%);
      }
 </style>
 
 <div class="container" class:opened class:closed={!opened}>
      <div class="header">
           <div class="bg" />
-          <div class="header-content">
+          <div class="header-content flex-col gap-y-10 flex">
                <div class="close-icon" on:click={() => (opened = false)}>
                     <MdCloseIcon />
                </div>

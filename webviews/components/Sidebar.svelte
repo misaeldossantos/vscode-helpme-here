@@ -1,7 +1,6 @@
 <script lang="ts">
-    import axios from "axios";
     import RpcCommands from "../core/RpcCommands";
-import StackoverflowService from "../core/StackoverflowService";
+    import StackoverflowService from "../core/StackoverflowService";
     import ActivityIndicator from "./ActivityIndicator.svelte";
     import ListItem from "./ListItem.svelte";
     import Question from "./Question.svelte";
@@ -14,6 +13,7 @@ import StackoverflowService from "../core/StackoverflowService";
     let loading = false;
     let questionModalOpened = false;
     let currentQuestion: any = null;
+    let page = 1;
 
     function openModal(question: any) {
         currentQuestion = question;
@@ -41,17 +41,26 @@ import StackoverflowService from "../core/StackoverflowService";
         text += clipboardText.trim();
     }
 
-    async function search() {
+    async function search(pg = 1) {
         try {
+            page = pg
             loading = true;
-            const data = await StackoverflowService.search({ q: text })
-            results = data.items;
+            const data = await StackoverflowService.search({ q: text, page })
+            if(pg === 1) {
+                results = data.items;
+            } else {
+                results.push(...data.items);
+            }
             hasMore = data.hasMore;
         } catch (e) {
             console.log(e);
         } finally {
             loading = false;
         }
+    }
+
+    async function loadMore() {
+        search(page++)
     }
 
     setPreviousState();
@@ -80,9 +89,11 @@ import StackoverflowService from "../core/StackoverflowService";
     }
 
     .form {
+        padding-top: 10px;
         display: flex;
         flex-direction: column;
     }
+    
 </style>
 
 <form class="form">
@@ -91,7 +102,7 @@ import StackoverflowService from "../core/StackoverflowService";
         Get selected text from editor
     </a>
     <a on:click={getFromClipboard} href="void(0)"> Paste from clipboard </a>
-    <button on:click={search}> Search on StackOverflow </button>
+    <button on:click={() => search(1)}> Search on StackOverflow </button>
 </form>
 
 <div class="list">
@@ -110,6 +121,11 @@ import StackoverflowService from "../core/StackoverflowService";
         {#each results as result}
             <ListItem on:openModal={event => openModal(event.detail)} item={result} />
         {/each}
+        {#if hasMore}
+            <button on:click={loadMore}>
+                Load more   
+            </button>
+        {/if}
     {/if}
 </div>
 
