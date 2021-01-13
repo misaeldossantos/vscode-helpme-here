@@ -6,6 +6,15 @@
   "engines": {
     "vscode": "^1.52.0"
   },
+  "repository": {
+    "url": "https://github.com/misaeldossantos/vscode-helpme-here"
+  },
+  "icon": "media/icon.png",
+  "publisher": "MisaelSantos",
+  "author": {
+    "name": "Misael dos Santos",
+    "email": "misaelbdossantos10@gmail.com"
+  },
   "categories": [
     "Other"
   ],
