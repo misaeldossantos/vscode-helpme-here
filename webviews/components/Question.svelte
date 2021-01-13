@@ -1,5 +1,6 @@
 <script lang="ts">
      import MdCloseIcon from "svelte-icons/md/MdClose.svelte";
+     import MdArrowDropUpIcon from "svelte-icons/md/MdArrowDropUp.svelte";
      import StackoverflowService from "../core/StackoverflowService";
      import ActivityIndicator from "./ActivityIndicator.svelte";
      import Answer from "./Answer.svelte";
@@ -8,6 +9,7 @@
      export let opened = false;
      let loading: boolean = false;
      let answers: any = [];
+     let containerRef;
 
      async function getAnswers() {
           try {
@@ -19,6 +21,10 @@
           } finally {
                loading = false
           }
+     }
+
+     function scrollToTop() {
+          containerRef?.scrollTo({ top: 0, behavior: 'smooth' })
      }
 
      $: if (question) {
@@ -118,9 +124,32 @@
      .closed {
           transform: translateX(100%);
      }
+
+     .to-top {
+          cursor: pointer;
+          position: fixed;
+          bottom: 0;
+          right: 0;
+          margin: 10px;
+          height: 30px;
+          width: 30px;
+          color: var(--vscode-button-background);
+          background-color: white;
+          border-radius: 50%;
+          transition: opacity 0.5s;
+     }
+
+     .to-top:hover {
+          opacity: 0.7;
+     }
 </style>
 
-<div class="container" class:opened class:closed={!opened}>
+<div 
+     class="container" 
+     bind:this={containerRef} 
+     class:opened 
+     class:closed={!opened}
+>
      <div class="header">
           <div class="bg" />
           <div class="header-content flex-col gap-y-10 flex">
@@ -149,4 +178,11 @@
                {/if}
           {/if}
      </div>
+
 </div>
+
+{#if opened}
+     <div class="to-top" on:click={scrollToTop}>
+          <MdArrowDropUpIcon />
+     </div>
+{/if}
